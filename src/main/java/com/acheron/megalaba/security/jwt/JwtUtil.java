@@ -1,6 +1,6 @@
 package com.acheron.megalaba.security.jwt;
 
-import com.acheron.flowers.security.entity.User;
+import com.acheron.megalaba.security.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,9 +34,6 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         claims.put("id", userDetails.getId());
-
-//        claims.put("group_id",userDetails.getGroup());
-//        claims.put("chair",userDetails.getChair())
         claims.put("name", userDetails.getFirstName());
         claims.put("role", userDetails.getRole().getAuthority());
         claims.put("roles", rolesList);

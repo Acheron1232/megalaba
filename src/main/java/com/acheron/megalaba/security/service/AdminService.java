@@ -1,7 +1,8 @@
 package com.acheron.megalaba.security.service;
 
-import com.acheron.flowers.security.entity.User;
-import com.acheron.flowers.security.repository.UserRepository;
+
+import com.acheron.megalaba.security.entity.User;
+import com.acheron.megalaba.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,7 @@ public class AdminService {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    public List<User> findAll(Integer pageId,Integer pageSize) {
+    public List<User> findAll(Integer pageId, Integer pageSize) {
         return userRepository.findAll(
                 PageRequest.of(pageId, pageSize)
         ).toList();

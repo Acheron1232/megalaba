@@ -1,6 +1,6 @@
-package com.acheron.megalaba.lessons.dto;
+package com.acheron.megalaba.security.dto;
 
-import jakarta.persistence.Column;
+import com.acheron.megalaba.security.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,13 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingDto {
-
-    private Long id;
-
+public class UserContextProps {
     private String firstName;
-
     private String lastName;
-    private Integer score;
-    private Float performance;
+    private Long id;
+    private String role;
 }

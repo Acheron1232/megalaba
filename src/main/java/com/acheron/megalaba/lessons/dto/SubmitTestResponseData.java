@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonsDto {
+public class SubmitTestResponseData {
     private Long id;
     private String title;
+    private Integer receivedPoints;
+    private Integer points;
 }

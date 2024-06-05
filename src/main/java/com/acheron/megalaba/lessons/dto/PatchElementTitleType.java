@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonsDto {
+public class PatchElementTitleType {
+    private String element;
     private Long id;
     private String title;
 }

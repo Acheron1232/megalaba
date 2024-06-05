@@ -1,7 +1,8 @@
 package com.acheron.megalaba.security.controller;
 
-import com.acheron.flowers.security.entity.User;
-import com.acheron.flowers.security.service.AdminService;
+
+import com.acheron.megalaba.security.entity.User;
+import com.acheron.megalaba.security.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/admin")
+@RequestMapping("/admin")
 public class AdminController {
     private final AdminService adminService;
 

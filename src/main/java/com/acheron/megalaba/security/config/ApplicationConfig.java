@@ -1,6 +1,6 @@
 package com.acheron.megalaba.security.config;
 
-import com.acheron.flowers.security.service.UserService;
+import com.acheron.megalaba.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

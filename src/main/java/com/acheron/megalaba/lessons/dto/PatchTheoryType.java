@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LessonsDto {
+public class PatchTheoryType {
     private Long id;
-    private String title;
+    private String html;
 }

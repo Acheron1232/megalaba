@@ -1,12 +1,13 @@
 package com.acheron.megalaba.security.service;
 
-import com.acheron.flowers.security.dto.LoginRequest;
-import com.acheron.flowers.security.dto.RegistrationRequest;
-import com.acheron.flowers.security.entity.User;
-import com.acheron.flowers.security.exception.custom.EmailAlreadyExists;
-import com.acheron.flowers.security.exception.custom.PhoneNumberAlreadyExists;
-import com.acheron.flowers.security.exception.custom.UserNotFoundException;
-import com.acheron.flowers.security.jwt.JwtUtil;
+import com.acheron.megalaba.security.controller.N;
+import com.acheron.megalaba.security.dto.LoginRequest;
+import com.acheron.megalaba.security.dto.RegistrationRequest;
+import com.acheron.megalaba.security.entity.User;
+import com.acheron.megalaba.security.exception.custom.EmailAlreadyExists;
+import com.acheron.megalaba.security.exception.custom.PhoneNumberAlreadyExists;
+import com.acheron.megalaba.security.exception.custom.UserNotFoundException;
+import com.acheron.megalaba.security.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +26,18 @@ public class LoginService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
-    public Cookie registration(RegistrationRequest registrationRequest) {
-        if(userService.findByEmail(registrationRequest.getEmail()).isEmpty()){
-            if(userService.findByPhoneNumber(registrationRequest.getPhoneNumber()).isEmpty()){
+    public N registration(RegistrationRequest registrationRequest) {
+        if (userService.findByEmail(registrationRequest.getEmail()).isEmpty()) {
 
-                User user = userService.save(registrationRequest);
-                return createCookie(jwtUtil.generateToken(user));
-            } throw new PhoneNumberAlreadyExists("User with phone number: "+ registrationRequest.getPhoneNumber() + " is already registered");
-        }else throw new EmailAlreadyExists("User with email: "+ registrationRequest.getEmail() + " is already registered");
+
+            User user = userService.save(registrationRequest);
+            Cookie cookie = createCookie(jwtUtil.generateToken(user));
+            return new N(cookie,user.getId());
+        } else
+            throw new EmailAlreadyExists("User with email: " + registrationRequest.getEmail() + " is already registered");
     }
 
-    public Cookie login(LoginRequest request) throws BadRequestException {
+    public N login(LoginRequest request) throws BadRequestException {
         if (request.getEmail() != null && request.getPassword() != null) {
             try {
                 authenticationManager
@@ -49,7 +51,8 @@ public class LoginService {
         } else {
             throw new BadRequestException("Bad request");
         }
-        return createCookie(jwtUtil.generateToken(userService.findByEmail(request.getEmail()).orElseThrow()));
+        N n = new N(createCookie(jwtUtil.generateToken(userService.findByEmail(request.getEmail()).orElseThrow())), userService.findByEmail(request.getEmail()).orElseThrow().getId());
+        return n;
     }
 
     private Cookie createCookie(String jwt) {

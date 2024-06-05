@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class QuizCreateDto {
-    private Long test;
+public class PostQuizType {
+    private Long parentTestId;
     private String question;
     private String optionA;
     private String optionB;
     private String optionC;
-    private String trueOption;
+    private String correctOption;
     private Integer points;
 }

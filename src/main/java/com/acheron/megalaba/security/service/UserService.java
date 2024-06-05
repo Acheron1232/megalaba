@@ -1,15 +1,15 @@
 package com.acheron.megalaba.security.service;
 
-import com.acheron.flowers.security.dto.PasswordChangeDto;
-import com.acheron.flowers.security.dto.RegistrationRequest;
-import com.acheron.flowers.security.dto.UserChangeDto;
-import com.acheron.flowers.security.entity.Role;
-import com.acheron.flowers.security.entity.User;
-import com.acheron.flowers.security.exception.custom.UserAlreadyExistsException;
-import com.acheron.flowers.security.mapper.UserMapper;
-import com.acheron.flowers.security.repository.UserRepository;
+
+import com.acheron.megalaba.security.dto.*;
+import com.acheron.megalaba.security.entity.Role;
+import com.acheron.megalaba.security.entity.User;
+import com.acheron.megalaba.security.exception.custom.UserAlreadyExistsException;
+import com.acheron.megalaba.security.mapper.UserMapper;
+import com.acheron.megalaba.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,10 +32,14 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public ResponseEntity<?> getCurrentUser(Principal principal){
-        User user = findByEmail(principal.getName()).orElse(null);
+    public List<User> findAllUsers(Sort sort) {
+        return userRepository.findAllByRole(Role.USER.getAuthority(),sort);
+    }
+
+    public ResponseEntity<?> getCurrentUser(Principal principal) {
+        User user = findByEmail(principal != null ? principal.getName() : null).orElse(null);
         if (user != null) {
-            return ResponseEntity.ok(userMapper.mapToUserGetDto(user));
+            return ResponseEntity.ok(new UserContextProps(user.getFirstName(),user.getLastName(),user.getId(),user.getRole().getAuthority().toLowerCase()));
         } else {
             return ResponseEntity.status(401).body("Unauthorized");
         }
@@ -44,13 +49,13 @@ public class UserService implements UserDetailsService {
         User user = findByEmail(principal.getName()).orElse(null);
         if (user != null) {
             User newUser = save(userMapper.mapFromUserChangeDto(userChangeDto, user));
-            return ResponseEntity.ok(newUser);
+            return ResponseEntity.ok(new Id(newUser.getId()));
         } else {
             return ResponseEntity.status(401).body("Unauthorized");
         }
     }
 
-    public ResponseEntity<String> changePassword(Principal principal, PasswordChangeDto passwordChangeDto,AuthenticationManager authenticationManager){
+    public ResponseEntity<String> changePassword(Principal principal, PasswordChangeDto passwordChangeDto, AuthenticationManager authenticationManager) {
         User user = findByEmail(principal.getName()).orElse(null);
         if (user != null && passwordChangeDto.getCurrentPassword() != null) {
             try {
@@ -62,11 +67,11 @@ public class UserService implements UserDetailsService {
             } catch (Exception e) {
                 throw new BadCredentialsException("Bad credentials");
             }
-            if (passwordChangeDto.getNewPassword() != null){
+            if (passwordChangeDto.getNewPassword() != null) {
 //                user.setPassword(passwordEncoder.encode(passwordChangeDto.getNewPassword()));
                 save(user);
                 return ResponseEntity.ok("Successful");
-            }else {
+            } else {
                 return ResponseEntity.badRequest().body("Bad request");
             }
         }
@@ -91,14 +96,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> findByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber);
-    }
-
     public User save(RegistrationRequest request) throws UserAlreadyExistsException {
         if (userAlreadyExists(request.getEmail())) {
             String password = passwordEncoder.encode(request.getPassword());
-            return userRepository.save(new User(null, request.getFirstName(), request.getLastName(), request.getEmail(), password, request.getPhoneNumber(), Role.USER));
+            return userRepository.save(new User(null, request.getFirstName(), request.getLastName(), request.getEmail(), password, null, null, null, Role.USER));
         } else {
             throw new UserAlreadyExistsException();
         }

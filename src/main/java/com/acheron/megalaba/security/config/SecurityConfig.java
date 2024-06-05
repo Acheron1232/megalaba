@@ -1,8 +1,8 @@
 package com.acheron.megalaba.security.config;
 
-import com.acheron.flowers.security.entity.Role;
-import com.acheron.flowers.security.jwt.JwtCookieFilter;
-import com.acheron.flowers.security.service.UserService;
+import com.acheron.megalaba.security.entity.Role;
+import com.acheron.megalaba.security.jwt.JwtCookieFilter;
+import com.acheron.megalaba.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,12 +33,12 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://localhost:5173/", cors).
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173/", cors).
+                        allowedMethods("GET", "POST", "OPTIONS", "PUT","PATCH","DELETE").
                         allowedOriginPatterns("*").exposedHeaders("*", "Set-Cookie", "X-XSRF-TOKEN").allowCredentials(true);
             }
         };
     }
-
 
     @SneakyThrows
     @Bean
@@ -51,20 +51,13 @@ public class SecurityConfig {
 //        ignoringRequestMatchers("/api/v2/login","/api/v2/csrf")).
         cors(Customizer.withDefaults()).
                 authorizeHttpRequests(request ->
-                        request.requestMatchers(
-//                                        "api/v2/logout",
-                                        "/api/v2/login", "/api/v2/registration",
-                                        "/api/v2/csrf", "/swagger-ui/**", "/v3/api-docs/**").
-                                permitAll().
-                                requestMatchers("/api/v2/user/**", "/api/v1/permit").authenticated().
-                                requestMatchers("/api/v2/admin/**").hasAuthority(Role.ADMIN.getAuthority()).
-                                anyRequest().
-                                authenticated()).
+                        request.requestMatchers("/admin/**")
+                                .hasAuthority(Role.ADMIN.getAuthority())
+                                .anyRequest().permitAll()
+                ).
                 userDetailsService(userService).
                 addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).
-//                addFilterBefore(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class).
-//                addFilterAfter(jwtFilter, CsrfCookieFilter.class).
-        build();
+                build();
     }
 
     @Bean

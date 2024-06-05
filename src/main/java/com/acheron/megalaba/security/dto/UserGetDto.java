@@ -1,6 +1,6 @@
 package com.acheron.megalaba.security.dto;
 
-import com.acheron.flowers.security.entity.Role;
+import com.acheron.megalaba.security.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserGetDto {
+
     private String firstName;
     private String lastName;
     private String email;
-    private String phoneNumber;
     private Role role;
 }
